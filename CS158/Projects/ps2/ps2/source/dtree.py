@@ -136,6 +136,10 @@ class Tree(object) :
         # part a: compute entropy
         # hint: use np.log2 to take log
         H = 0
+        total_count = np.sum(counts) # get full sum
+        for count in counts:
+            frac = count / total_count
+            H -= frac * np.log2(frac)
         ### ========== TODO : END ========== ###
         
         return H
@@ -177,6 +181,9 @@ class Tree(object) :
             ### ========== TODO : START ========== ###
             # part c: compute conditional entropy
             H_cond = 0
+            prob1 = len(X1) / (len(X1) + len(X2))
+            prob2 = len(X2) / (len(X1) + len(X2))
+            H_cond -= (prob1 * self._entropy(y1) + prob2 * self._entropy(y2))
             ### ========== TODO : END ========== ###
             H_conds[i] = H_cond
         
@@ -222,7 +229,13 @@ class Tree(object) :
         y1, y2 = [], []
         ### ========== TODO : START ========== ###
         # part b: split data set
-        
+        for i in range(n):
+            if X[i,feature] <= threshold:
+                X1.append(X[i])
+                y1.append(y[i])
+            else:
+                X2.append(X[i])
+                y2.append(y[i])
         ### ========== TODO : END ========== ###
         X1, X2 = np.array(X1), np.array(X2)
         y1, y2 = np.array(y1), np.array(y2)
@@ -336,7 +349,7 @@ class Tree(object) :
         if True : # you should modify this condition
             # this line is so that the code can run
             # you can comment it out (or not) once you add your own code
-            pass
+            leaf = TREE_LEAF
             
             # create a single leaf
             
