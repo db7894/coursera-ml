@@ -114,7 +114,12 @@ class Cluster(object) :
         ### ========== TODO : START ========== ###
         # part 2b: implement
         # set the centroid label to any value (e.g. the most common label in this cluster)
-        centroid = None
+        labels = []
+        for p in self.points :
+            labels.append(p.label)
+        (values, counts) = np.unique(labels, return_counts=True)
+        maxLabel = np.argmax(counts)
+        centroid = Point(maxLabel)
         return centroid
         ### ========== TODO : END ========== ###
     

@@ -346,28 +346,28 @@ class Tree(object) :
         # base case
         # 1) all samples have same labels
         # 2) all feature values are equal
-        if True : # you should modify this condition
+        if len(value) == 1: # you should modify this condition
             # this line is so that the code can run
             # you can comment it out (or not) once you add your own code
-            leaf = TREE_LEAF
-            
+            leaf = TREE_LEAF # b/c only one label
+            leaf.n_classes = 1
+            leaf.n_features = 1
             # create a single leaf
             
         else:
             # this line is so that the code can run
             # you can comment it out (or not) once you add your own code
-            pass
             
             # choose best feature (and find associated threshold)
-            
+            bestFeature, threshold = np.argmax(map(lambda x: self._information_gain(x,y), X))
             # make new decision tree node
-            
+            self._create_new_node(node, bestFeature, threshold, value, impurity)
             # split data on best feature
-            
+            X1,y1,X2,y2 = self._split_data(X,y,bestFeature,threshold)
             # build left subtree using recursion
-            
+            self._build_helper(X1,y1)
             # build right subtree using recursion
-            
+            self._build_helper(X2,y2)
         ### ========== TODO : END ========== ###
     
     #========================================

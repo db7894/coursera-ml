@@ -116,8 +116,12 @@ class PolynomialRegression() :
         
         ### ========== TODO : START ========== ###
         # part b: modify to create matrix for simple linear model
+        X0 = np.ones((n,1))
+        X = np.hstack((X0,X)) # add array of ones as left column
         # part g: modify to create matrix for polynomial model
         Phi = X
+        m = self.m_
+        Phi = np.array([map(lambda n: pow(x[0],n), range(0,m+1)) for x in X])
         
         ### ========== TODO : END ========== ###
         
@@ -172,16 +176,17 @@ class PolynomialRegression() :
             ### ========== TODO : END ========== ###
             
             # iterate through examples
-            for i in xrange(n) :
-                ### ========== TODO : START ========== ###
-                # part d: update theta (self.coef_) using one step of SGD
-                # hint: you can simultaneously update all theta using vector math
-                
-                # track error
-                # hint: you cannot use self.predict(...) to make the predictions
-                y_pred = y # change this line
-                err_list[t] = np.sum(np.power(y - y_pred, 2)) / float(n)                
-                ### ========== TODO : END ========== ###
+            # for i in xrange(n) : # maybe bring this back???
+            ### ========== TODO : START ========== ###
+            # part d: update theta (self.coef_) using one step of SGD
+            # hint: you can simultaneously update all theta using vector math
+            self.coef_ = self.coef_ - eta*(np.dot((np.dot(X.T, X)), self.coef_) - np.dot(X.T, y))
+            
+            # track error
+            # hint: you cannot use self.predict(...) to make the predictions
+            y_pred = np.dot(self.coef_,X.T)
+            err_list[t] = np.sum(np.power(y - y_pred, 2)) / float(n)                
+            ### ========== TODO : END ========== ###
             
             # stop?
             if t > 0 and abs(err_list[t] - err_list[t-1]) < eps :
@@ -227,7 +232,7 @@ class PolynomialRegression() :
         # part e: implement closed-form solution
         # hint: use np.dot(...) and np.linalg.pinv(...)
         #       be sure to update self.coef_ with your solution
-        
+        self.coef_ = ((np.linalg.pinv(np.dot(X.T,X))).dot(X.T)).dot(y)
         # part j: include L_2 regularization
         
         ### ========== TODO : END ========== ###
@@ -252,7 +257,7 @@ class PolynomialRegression() :
         
         ### ========== TODO : START ========== ###
         # part c: predict y
-        y = None
+        y = np.dot(self.coef_, X,T)
         ### ========== TODO : END ========== ###
         
         return y
@@ -273,7 +278,7 @@ class PolynomialRegression() :
         """
         ### ========== TODO : START ========== ###
         # part d: compute J(theta)
-        cost = 0
+        cost = np.sum([(self.predict(X) - y)**2])
         ### ========== TODO : END ========== ###
         return cost
     
@@ -293,7 +298,7 @@ class PolynomialRegression() :
         """
         ### ========== TODO : START ========== ###
         # part h: compute RMSE
-        error = 0
+        error = np.sqrt(sum(sum([(self.predict(X) - y)**2]))/float(X.shape[0]))
         ### ========== TODO : END ========== ###
         return error
     

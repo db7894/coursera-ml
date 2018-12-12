@@ -191,6 +191,23 @@ def kMeans(points, k, init='random', plot=False) :
     #   (2) Repeat until the clustering no longer changes.
     #   (3) To plot, use plot_clusters(...).
     k_clusters = ClusterSet()
+    if init=='random':
+        random_init(points, k) # perform random initialization
+        while True:
+            cluster_assignments = {}
+            old_assignments = cluster_assignments
+            for point in points:
+                # assign point to closest cluster center
+                min_dist = 100000000
+                best_cluster = None
+                for cluster in k_clusters:
+                    point_dist = point.distance(cluster)
+                    if point_dist < min_dist:
+                        best_cluster = cluster
+                point.label = cluster
+                cluster_assignments[point] = cluster # keep track of cluster assignments
+            if cluster_assignments == old_assignments:
+                break
     return k_clusters
     ### ========== TODO : END ========== ###
 
