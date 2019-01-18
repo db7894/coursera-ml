@@ -128,7 +128,7 @@ class PolynomialRegression() :
         return Phi
     
     
-    def fit_SGD(self, X, y, eta=0.01,
+    def fit_SGD(self, X, y, eta=None,
                 eps=1e-10, tmax=1000000, verbose=False) :
         """
         Finds the coefficients of a {d-1}^th degree polynomial
@@ -170,7 +170,7 @@ class PolynomialRegression() :
             # change the default eta in the function signature to 'eta=None'
             # and update the line below to your learning rate function
             if eta_input is None :
-                eta = None # change this line
+                eta = 1/t # change this line
             else :
                 eta = eta_input
             ### ========== TODO : END ========== ###
@@ -257,7 +257,7 @@ class PolynomialRegression() :
         
         ### ========== TODO : START ========== ###
         # part c: predict y
-        y = np.dot(self.coef_, X,T)
+        y = np.dot(self.coef_, X.T)
         ### ========== TODO : END ========== ###
         
         return y

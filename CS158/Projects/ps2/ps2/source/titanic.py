@@ -167,11 +167,14 @@ def error(clf, X, y, ntrials=100, test_size=0.2) :
     
     ### ========== TODO : START ========== ###
     # part b: compute cross-validation error over ntrials
-    # hint: use train_test_split (be careful of the parameters)
-    
-    train_error = 0
-    test_error = 0    
-        
+    # hint: use train_test_split (be careful of the parameters)  
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+    clf.fit(X_train, y_train)
+    y_tr = clf.predict(X_train)
+    y_ts = clf.predict(X_test)
+
+    train_error = 1 - metrics.accuracy_score(y_train, y_tr, normalize=True)
+    test_error = 1 - metrics.accuracy_score(y_test, y_ts, normalize=True)
     ### ========== TODO : END ========== ###
     
     return train_error, test_error
@@ -214,7 +217,11 @@ def main():
     ### ========== TODO : START ========== ###
     # part a: evaluate training error of Decision Tree classifier
     print 'Classifying using Decision Tree...'
-    
+    dtree = DecisionTreeClassifier(criterion="entropy")
+    dtree.fit(X, y)
+    y_dtree = dtree.predict(X)
+    dtree_err = 1 - metrics.accuracy_score(y, y_dtree, normalize=True)
+    print '\t-- dtree error: %.3f' % dtree_err
     ### ========== TODO : END ========== ###
     
     
@@ -237,7 +244,10 @@ def main():
     ### ========== TODO : START ========== ###
     # part b: use cross-validation to compute average training and test error of classifiers
     print 'Investigating various classifiers...'
-    
+    clf_train, clf_test = error(clf, X, y)
+    dt_train, dt_test = error(dtree, X, y)
+    print 'Majority vote average train error: ' + str(clf_train) + ' and test error: ' + str(clf_test)
+    print 'dtree average train error: ' + str(dt_train) + ' and test error: ' + str(dt_test)
     ### ========== TODO : END ========== ###
     
     
@@ -245,7 +255,14 @@ def main():
     ### ========== TODO : START ========== ###
     # part c: investigate decision tree classifier with various depths
     print 'Investigating depths...'
-    
+    depth_err = {}
+    for depth in range(1,21):
+        clf = DecisionTreeClassifier(criterion="entropy", max_depth=depth)
+        clf_train, clf_test = error(clf, X, y)
+        depth_err[depth] = clf_test
+        print 'depth = ' + str(depth) + '\n training error: ' + str(clf_train) + '\n test error: ' + str(clf_test)
+    # we choose a depth of 6 based on the experiment.
+
     ### ========== TODO : END ========== ###
     
     
@@ -253,7 +270,10 @@ def main():
     ### ========== TODO : START ========== ###
     # part d: investigate decision tree classifier with various training set sizes
     print 'Investigating training set sizes...'
-    
+    dt = DecisionTreeClassifier(criterion="entropy", max_depth=6)
+    for split in range(1,20):
+        test_size = 0.05 * split
+        dt_train, dt_test = error(dt, X, y, test_size=test_size)
     ### ========== TODO : END ========== ###
     
     

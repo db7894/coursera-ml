@@ -101,11 +101,19 @@ def extract_dictionary(infile) :
         ### ========== TODO : START ========== ###
         # part 1a: process each line to populate word_list
         fileString = fid.readlines()
-        words = extract_words(fileString)
-        for i in range(len(words)):
-            if words[i] not in word_list:
-                word_list[words[i]] = i # tag unique word w/ first idx encountered
+        allWords = [] # list of all words from all lines read
+        for string in fileString:
+            words = extract_words(string)
+            realWords = [word for word in words]
+            allWords.extend(realWords)
+            # print 'words was: ' + str(words)
+            # print 'realWords is: ' + str(realWords)
+
+        for i in range(len(allWords)):
+            if allWords[i] not in word_list:
+                word_list[allWords[i]] = i # tag unique word w/ first idx encountered
         ### ========== TODO : END ========== ###
+    print 've is: ' + str(word_list['ve'])
 
     return word_list
 
@@ -361,8 +369,9 @@ def select_param_rbf(X, y, kf, metric="accuracy") :
     tuned_params = [{'kernel': ['rbf'], 'gamma':[1e-5,1e-4,1e-3,1e-2,1e-1,1], 
     'C': [10.0 ** np.arange(-3,3)]}]
     clf = sklearn.model_selection.GridSearchCV(SVC(), tuned_params, cv=5)
-    perf = cv_performance(clf,, X, y, kf, metric)
+    perf = cv_performance(clf, X, y, kf, metric)
     params = clf.best_params_
+    print 'best params were: ' + str(params)
     return 0.0, 1.0
     ### ========== TODO : END ========== ###
 
@@ -516,9 +525,9 @@ def main() :
     # part 2b: create stratified folds (5-fold CV)
     skf = StratifiedKFold(y, n_folds = 5)
     # part 2d: for each metric, select optimal hyperparameter for linear-kernel SVM using CV
-    
+    C = select_param_linear(X, y, skf)
     # part 3c: for each metric, select optimal hyperparameter for RBF-SVM using CV
-    
+    C, gamma = select_param_rbf(X, y, skf)
     # part 4a: train linear- and RBF-kernel SVMs with selected hyperparameters
     
     # part 4c: use bootstrapping to report performance on test data
